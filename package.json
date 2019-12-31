@@ -1,0 +1,34 @@
+{
+    "name": "electron-topic-ipc",
+    "version": "0.0.1",
+    "description": "Topic based publish and subscribing similar to rabbitmq's topic exchange.",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "prepublish": "npm run build",
+        "build": "npm run build:proj",
+        "build:proj": "tsc --p tsconfig.json",
+        "build:test": "tsc --p tsconfig.spec.json",
+        "run:test": "jasmine --config=./src/spec/support/jasmine.json || exit 0",
+        "clean:test": "rmdir /q /s test || exit 0",
+        "test": "npm run build:test && npm run run:test && npm run clean:test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/CobeGreene/electron-topic-ipc.git"
+    },
+    "author": "Cobe Greene",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/CobeGreene/electron-topic-ipc/issues"
+    },
+    "homepage": "https://github.com/CobeGreene/electron-topic-ipc#readme",
+    "dependencies": {},
+    "devDependencies": {
+        "jasmine": "^3.5.0",
+        "jasmine-ts-console-reporter": "^3.1.1",
+        "@types/jasmine": "^3.4.0",
+        "@types/node": "^12.11.1",
+        "typescript": "^3.6.3"
+    }
+}

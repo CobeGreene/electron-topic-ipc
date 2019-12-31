@@ -7,6 +7,12 @@ export class TopicNode {
         this.children = [];
         this.count = 0;
     }
+
+    isATopicChannel(): boolean {
+        const sum = this.children.map((value) => value.count)
+            .reduce((sum, current) => sum + current, 0);
+        return this.count > sum;
+    }
 }
 
 

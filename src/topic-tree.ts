@@ -68,7 +68,7 @@ export class TopicTree {
     private removeAllRecursion(parent: TopicNode, childIndex: number, words: string[]): number {
         const child = parent.children[childIndex];
         if (words.length === 0) {
-            if (child.count > child.children.length) {
+            if (child.isATopicChannel()) {
                 const amount = child.count - child.children.length;
                 child.count -= amount;
                 if (child.count === 0) {
@@ -104,7 +104,7 @@ export class TopicTree {
         const child = parent.children[childIndex];
         
         if (words.length === 0) {
-            if (child.count > child.children.length) {
+            if (child.isATopicChannel()) {
                 --child.count;
                 if (child.count === 0) {
                     parent.children.splice(childIndex, 1);
@@ -145,8 +145,15 @@ export class TopicTree {
             cmd(prefix);
         } else if (parent.children.length === 0 && words.length > 0 && parent.word === this.hash) {
             cmd(prefix);
-        } else if (parent.children.length > 0 && words.length === 0 && parent.count > parent.children.length) {
-            cmd(prefix);
+        } else if (parent.children.length > 0 && words.length === 0) {
+            if (parent.isATopicChannel()) {
+                cmd(prefix);
+            } 
+            parent.children.forEach((child) => {
+                if (child.word === this.hash) {
+                    this.traverseRecusive(`${prefix}${this.delimiter}${child.word}`, words, child, cmd);
+                }
+            });
         } else if (parent.children.length > 0 && words.length > 0) {
             let currentWord = words[0];
             parent.children.forEach((child) => {

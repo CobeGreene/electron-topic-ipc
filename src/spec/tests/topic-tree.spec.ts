@@ -578,5 +578,19 @@ describe('Topic Tree Tests', () => {
         expect(count).toBe(0);
     });
 
+    it('multiple hash tag still should get called', () => {
+        let count = 0;
+        let cmd = (channel: string) => {
+            count++;
+        }
+
+        tree.add('one.#');
+        tree.add('one.#.#');
+        tree.add('one.#.#.#.#.#');
+        tree.traverse('one', cmd);
+        
+        expect(count).toBe(3);
+    });
+
 });
 

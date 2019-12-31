@@ -532,5 +532,51 @@ describe('Topic Tree Tests', () => {
         }).toThrowError();
     });
 
+    it('remove all direct', () => {
+        let count = 0;
+        let cmd = (channel: string) => {
+            count++;
+        }
+
+        tree.add('one');
+        tree.add('one');
+        tree.removeAll('one');
+        tree.traverse('one', cmd);
+        
+        expect(count).toBe(0);
+    });
+
+    it('remove all leaf', () => {
+        let count = 0;
+        let cmd = (channel: string) => {
+            count++;
+        }
+
+        tree.add('one.two.three');
+        tree.add('one.two.three');
+        tree.add('one.two.*');
+        tree.removeAll('one.two.three');
+        tree.traverse('one.two.three', cmd);
+
+        expect(count).toBe(1);
+    });
+
+    it('remove all on root of subtree', () => {
+        let count = 0;
+        let cmd = (channel: string) => {
+            count++;
+        }
+
+        tree.add('one.two.three');
+        tree.add('one.two.four');
+        tree.add('one.two');
+        tree.add('one.two');
+        tree.add('one.two');
+        tree.removeAll('one.two');
+        tree.traverse('one.two', cmd);
+
+        expect(count).toBe(0);
+    });
+
 });
 

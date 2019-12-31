@@ -9,28 +9,30 @@ export class TopicIpcService implements IpcService {
     constructor(private ipcService: IpcService, options: {
         delimintor: string,
         star?: string,
-        hash?: string
+        hash?: string,
+        throwOnRemove?: boolean
     }) {
-        this.tree = new TopicTree(options.delimintor, options.star, options.hash);
+        this.tree = new TopicTree(options.delimintor, options.star, options.hash, options.throwOnRemove);
     }
 
     send(channel: string, ...args: any): void {
-        throw new Error("Method not implemented.");
+        this.tree.traverse(channel, (topic) => {
+            this.ipcService.send(topic, ...args);
+        });
     }
     
     on(channel: string, listener: Listener): void {
-        throw new Error("Method not implemented.");
-    }
-
-    once(channel: string, listener: Listener): void {
-        throw new Error("Method not implemented.");
+        this.tree.add(channel);
+        this.ipcService.on(channel, listener);
     }
 
     removeListener(channel: string, listener: Listener): void {
-        throw new Error("Method not implemented.");
+        this.tree.remove(channel);
+        this.ipcService.removeListener(channel, listener);
     }
 
     removeAllListeners(channel: string): void {
-        throw new Error("Method not implemented.");
+        this.tree.removeAll(channel);
+        this.ipcService.removeAllListeners(channel);
     }
 }

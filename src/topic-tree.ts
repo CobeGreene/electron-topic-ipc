@@ -4,7 +4,7 @@ export class TopicTree {
 
     private root: TopicNode;
 
-    constructor(public delimiter: string, public star: string = '*', public hash: string = '#') {
+    constructor(private delimiter: string, private star: string = '*', private hash: string = '#', public throwOnRemove: boolean = true) {
         this.root = new TopicNode('');
     }
 
@@ -46,6 +46,56 @@ export class TopicTree {
         if (childIndex >= 0) {
             this.removeRecursion(this.root, childIndex, words.slice(1));
         } else {
+            this.removeThrowNotFound();
+        }
+    }
+
+    removeAll(topic: string) {
+        let words = this.getWords(topic);
+        let currentWord = words[0];
+
+        const childIndex = this.root.children.findIndex((node) => {
+            return node.word === currentWord;
+        });
+
+        if (childIndex >= 0) {
+            this.removeAllRecursion(this.root, childIndex, words.slice(1));
+        } else {
+            this.removeThrowNotFound();
+        }
+    }
+
+    private removeAllRecursion(parent: TopicNode, childIndex: number, words: string[]): number {
+        const child = parent.children[childIndex];
+        if (words.length === 0) {
+            if (child.count > child.children.length) {
+                const amount = child.count - child.children.length;
+                child.count -= amount;
+                if (child.count === 0) {
+                    parent.children.splice(childIndex, 1);
+                }
+                parent.count -= amount;
+                return amount;
+            } 
+        } else {
+            const nextIndex = child.children.findIndex((node) => {
+                return node.word === words[0];
+            });
+            if (nextIndex >= 0) {
+                const amount = this.removeAllRecursion(child, nextIndex, words.slice(1));
+                if (child.count === 0) {
+                    parent.children.splice(childIndex, 1);
+                }
+                parent.count -= amount;
+                return amount;
+            }
+        }
+        this.removeThrowNotFound();
+        return 0;
+    }
+
+    private removeThrowNotFound() {
+        if (this.throwOnRemove) {
             throw new Error(`Couldn't find topic.`);
         }
     }
@@ -75,7 +125,7 @@ export class TopicTree {
                 return;
             } 
         }
-        throw new Error(`Couldn't find topic.`);
+        this.removeThrowNotFound();
     }
 
 
